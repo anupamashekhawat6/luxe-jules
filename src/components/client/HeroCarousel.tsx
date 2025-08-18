@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { Model } from '@/lib/types';
@@ -18,12 +17,6 @@ interface HeroCarouselProps {
 }
 
 export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items: initialItems }) => {
-  
-  // Guard clause to prevent rendering if there are no models
-  if (!initialItems || initialItems.length === 0) {
-    return null; 
-  }
-
   // State to hold the items and the current animation class
   const [items, setItems] = useState(initialItems);
   const [carouselClass, setCarouselClass] = useState('');
@@ -31,7 +24,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items: initialItems 
   // Refs to manage timeouts, preventing issues with re-renders
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const autoNextTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
+  
   // Animation and auto-play timing constants
   const timeRunning = 3000;
   const timeAutoNext = 7000;
@@ -83,8 +76,9 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items: initialItems 
     };
   }, [items, carouselClass, handleNext]);
 
-  if (!items || items.length === 0) {
-    return null;
+  // Guard clause to prevent rendering if there are no models
+  if (!initialItems || initialItems.length === 0) {
+    return null; 
   }
   
   const thumbnailItems = items.slice(1);
