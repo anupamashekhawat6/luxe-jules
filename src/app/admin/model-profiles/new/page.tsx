@@ -13,6 +13,8 @@ import type { ModelProfileWithImages } from '@/lib/hero-sample-data';
 
 const modelProfileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
+  description: z.string().optional(),
+  category: z.string().optional(),
   backgroundImage: z.string().url("Please provide a valid background image URL.").optional(),
   mainImage: z.string().url("Please provide a valid main image URL.").optional(),
   carouselImages: z.array(z.object({
@@ -49,7 +51,7 @@ export default function NewModelProfilePage() {
         id: `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         name: values.name,
         category: values.category,
-        description: values.description || null,
+        description: values.description || undefined,
         createdAt: new Date(),
         updatedAt: new Date(),
         images: [

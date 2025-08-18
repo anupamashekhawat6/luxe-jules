@@ -34,9 +34,9 @@ export default function FavoritesPage() {
             const allVideos = getVideos();
             const allGalleries = getGalleries();
             const allPhotosFromGalleries = allGalleries.flatMap(g => 
-                (g.album || []).map((url, i) => ({
+                (g.images || []).map((img, i) => ({
                     id: `${g.id}-photo-${i}`,
-                    image: url,
+                    image: img.url,
                     title: `${g.title} - Photo ${i+1}`,
                     galleryId: g.id,
                     galleryTitle: g.title,

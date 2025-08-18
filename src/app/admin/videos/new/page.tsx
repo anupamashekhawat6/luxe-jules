@@ -43,6 +43,7 @@ export default function NewVideoPage() {
         const newVideo: Video = {
             id: `video_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             ...values,
+            description: values.description || '',
             videoUrl: values.videoUrl || '',
             isFeatured: values.isFeatured || false,
             tags: tagsArray,

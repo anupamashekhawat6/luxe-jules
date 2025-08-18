@@ -61,14 +61,14 @@ export default function VideoPage() {
     }
     
     const allModels = getModels();
-    const modelData = videoData.models.map(name => {
+    const modelData = (videoData.models || []).map(name => {
         return allModels.find(m => m.name === name);
     }).filter((m): m is Model => !!m);
 
     const allVideos = getVideos();
     let related = allVideos
       .filter(v => v.id !== id && v.status === 'Published')
-      .filter(v => v.tags.some(tag => videoData.tags.includes(tag)))
+      .filter(v => (v.tags || []).some(tag => (videoData.tags || []).includes(tag)))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 3);
 

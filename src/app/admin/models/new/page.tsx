@@ -18,7 +18,7 @@ import { AIAvatarGenerator } from '@/components/admin/AIAvatarGenerator'
 import { getModels, setModels } from '@/lib/localStorage'
 import type { Model } from '@/lib/types'
 
-export const modelSchema = z.object({
+const modelSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
     image: z.string().min(1, { message: "Image URL is required." }).url("Please provide a valid image URL."),
     description: z.string().optional(),
@@ -56,6 +56,7 @@ export default function NewModelPage() {
         const newModel: Model = {
             id: `model_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             ...values,
+            status: 'Active',
             description: values.description || '', // Ensure description is not undefined
         };
         const models = getModels();

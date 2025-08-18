@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Video } from '@/lib/types';
 import { getVideos } from '@/lib/localStorage';
 import { ContentCard } from '@/components/shared/ContentCard';
@@ -14,12 +15,21 @@ import { PaginationControls } from '@/components/shared/PaginationControls';
 const ITEMS_PER_PAGE = 12;
 
 export function VideosList() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'duration'>('newest');
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+
+  const setCurrentPage = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', page.toString());
+    router.push(`?${params.toString()}`);
+  };
 
   useEffect(() => {
     const allVideos = getVideos();
@@ -41,11 +51,11 @@ export function VideosList() {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
         case 'oldest':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
         case 'duration':
-          return parseInt(b.duration) - parseInt(a.duration);
+          return parseInt(b.duration || '0') - parseInt(a.duration || '0');
         default:
           return 0;
       }
@@ -108,7 +118,9 @@ export function VideosList() {
               variant={selectedCategory === category ? 'default' : 'outline'}
               size="sm"
               onClick={() => {
-                setSelectedCategory(category);
+                if (category) {
+                  setSelectedCategory(category);
+                }
                 setCurrentPage(1);
               }}
             >
@@ -170,7 +182,7 @@ export function VideosList() {
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          basePath="/videos"
         />
       )}
     </div>

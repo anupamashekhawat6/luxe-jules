@@ -10,7 +10,9 @@ import { getVideos, getGalleries, getModels } from '@/lib/localStorage'
 import { type Video as VideoType, type Gallery } from '@/lib/types'
 import { Skeleton } from '@/components/ui/skeleton'
 
-type ContentItem = (VideoType | Gallery) & { type: 'video' | 'gallery' };
+type VideoItem = VideoType & { type: 'video' };
+type GalleryItem = Gallery & { type: 'gallery' };
+type ContentItem = VideoItem | GalleryItem;
 
 const StatCard = ({ title, value, icon: Icon }: { title: string; value: string; icon: React.ElementType; }) => (
     <Card className="bg-card border-border shadow-lg">
@@ -105,14 +107,22 @@ export default function AdminDashboard() {
                                 </div>
                             ))
                         ) : recentContent.length > 0 ? (
-                            recentContent.map(item => (
+                            recentContent.map(item => {
+                                let imageUrl: string | undefined;
+                                if (item.type === 'gallery') {
+                                    imageUrl = item.images[0]?.url;
+                                } else {
+                                    imageUrl = item.image;
+                                }
+                                if (!imageUrl) return null; // Don't render if no image
+                                return (
                                 <div key={item.id} className="flex items-center gap-3 sm:gap-4 w-full max-w-full">
                                     <Image 
-                                        src={item.image} 
+                                        src={imageUrl}
                                         alt={item.title} 
                                         width={64} 
                                         height={64} 
-                                        className="rounded-md object-cover w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0"
+                                        className="rounded-md object-cover w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 bg-muted"
                                     />
                                     <div className="flex-1 min-w-0 overflow-hidden">
                                         <h3 className="font-medium text-sm sm:text-base text-truncate-1">{item.title}</h3>
@@ -127,7 +137,8 @@ export default function AdminDashboard() {
                                         Edit
                                     </Button>
                                 </div>
-                            ))
+                                )
+                            })
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
                                 <p className="text-sm sm:text-base">No recent content found</p>

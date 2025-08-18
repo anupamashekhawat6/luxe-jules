@@ -60,13 +60,15 @@ export function GalleriesAdminClient() {
 
   const handleCreate = async (formData: FormData) => {
     try {
+      const title = formData.get('title') as string;
       const newGallery: Gallery = {
         id: Date.now().toString(), // Simple ID generation
-        title: formData.get('title') as string,
+        title: title,
         description: formData.get('description') as string,
-        images: (formData.get('images') as string).split(',').map(url => ({ url: url.trim() })),
-        coverImage: formData.get('image') as string,
-        category: formData.get('category') as string,
+        images: (formData.get('images') as string).split(',').map(url => ({ url: url.trim(), alt: title })),
+        models: [],
+        keywords: [],
+        tags: [],
         status: 'Draft', // Default status
         date: new Date().toISOString(),
       };

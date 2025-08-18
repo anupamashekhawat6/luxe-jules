@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Gallery } from '@/lib/types';
 import { getGalleries } from '@/lib/localStorage';
 import { ContentCard } from '@/components/shared/ContentCard';
@@ -14,11 +15,20 @@ import { PaginationControls } from '@/components/shared/PaginationControls';
 const ITEMS_PER_PAGE = 12;
 
 export function GalleriesList() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [galleries, setGalleries] = useState<Gallery[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+
+  const setCurrentPage = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', page.toString());
+    router.push(`?${params.toString()}`);
+  };
 
   useEffect(() => {
     const allGalleries = getGalleries();
@@ -93,7 +103,9 @@ export function GalleriesList() {
               variant={selectedCategory === category ? 'default' : 'outline'}
               size="sm"
               onClick={() => {
-                setSelectedCategory(category);
+                if (category) {
+                  setSelectedCategory(category);
+                }
                 setCurrentPage(1);
               }}
             >
@@ -137,7 +149,7 @@ export function GalleriesList() {
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          basePath="/galleries"
         />
       )}
     </div>

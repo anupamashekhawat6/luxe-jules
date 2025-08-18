@@ -38,7 +38,7 @@ function ModelPageSkeleton() {
 }
 
 const MeasurementCard = ({model}: {model: Model}) => {
-    const hasMeasurements = model.height || model.weight || model.eyes || model.hair;
+    const hasMeasurements = model.height || model.bust || model.waist || model.hips;
     if (!hasMeasurements) return null;
 
     return (
@@ -47,9 +47,9 @@ const MeasurementCard = ({model}: {model: Model}) => {
                 <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4">Measurements</h3>
                 <div className="grid grid-cols-2 gap-4">
                     {model.height && <div className="text-center"><div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">Height</div><div className="text-sm md:text-base font-medium mt-1">{model.height}</div></div>}
-                    {model.weight && <div className="text-center"><div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">Weight</div><div className="text-sm md:text-base font-medium mt-1">{model.weight}</div></div>}
-                    {model.eyes && <div className="text-center"><div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">Eyes</div><div className="text-sm md:text-base font-medium mt-1">{model.eyes}</div></div>}
-                    {model.hair && <div className="text-center"><div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">Hair</div><div className="text-sm md:text-base font-medium mt-1">{model.hair}</div></div>}
+                    {model.bust && <div className="text-center"><div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">Bust</div><div className="text-sm md:text-base font-medium mt-1">{model.bust}</div></div>}
+                    {model.waist && <div className="text-center"><div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">Waist</div><div className="text-sm md:text-base font-medium mt-1">{model.waist}</div></div>}
+                    {model.hips && <div className="text-center"><div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">Hips</div><div className="text-sm md:text-base font-medium mt-1">{model.hips}</div></div>}
                 </div>
             </CardContent>
         </Card>
@@ -134,14 +134,14 @@ export default function ModelPage() {
                         )}
 
                         <div className="flex gap-2 flex-wrap">
-                            {model.socialMedia?.instagram && (
+                            {model.instagram && (
                                 <Button variant="ghost" size="icon" asChild className="touch-manipulation">
-                                    <a href={model.socialMedia.instagram} target="_blank" rel="noopener noreferrer" aria-label={`${model.name}'s Instagram`}><Instagram className="h-5 w-5"/></a>
+                                    <a href={`https://instagram.com/${model.instagram}`} target="_blank" rel="noopener noreferrer" aria-label={`${model.name}'s Instagram`}><Instagram className="h-5 w-5"/></a>
                                 </Button>
                             )}
-                            {model.socialMedia?.twitter && (
+                            {model.twitter && (
                                 <Button variant="ghost" size="icon" asChild className="touch-manipulation">
-                                    <a href={model.socialMedia.twitter} target="_blank" rel="noopener noreferrer" aria-label={`${model.name}'s Twitter`}><Twitter className="h-5 w-5"/></a>
+                                    <a href={`https://twitter.com/${model.twitter}`} target="_blank" rel="noopener noreferrer" aria-label={`${model.name}'s Twitter`}><Twitter className="h-5 w-5"/></a>
                                 </Button>
                             )}
                         </div>
