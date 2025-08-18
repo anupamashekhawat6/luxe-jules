@@ -40,11 +40,21 @@ export function GalleriesAdminClient() {
     loadGalleries();
   }, [loadGalleries]);
 
-  useRealtimeSync(useCallback((event) => {
-    if (event.key === 'galleries') {
-      loadGalleries();
-    }
-  }, [loadGalleries]));
+  useEffect(() => {
+    const handleStorageChange = (event: Event) => {
+      console.log('Storage event received in GalleriesAdminClient:', event);
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail.key === 'galleries') {
+        loadGalleries();
+      }
+    };
+
+    window.addEventListener('custom-storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('custom-storage', handleStorageChange);
+    };
+  }, [loadGalleries]);
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this gallery?')) {
@@ -68,33 +78,17 @@ export function GalleriesAdminClient() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const handleCreate = async (formData: FormData) => {
     try {
-      const title = formData.get('title') as string;
-      const description = formData.get('description') as string;
-      const coverImageUrl = formData.get('image') as string;
-      const galleryImageUrls = (formData.get('images') as string)
-        .split(',')
-        .map(url => url.trim())
-        .filter(Boolean);
-
-      const allImageUrls = [];
-      if (coverImageUrl) {
-        allImageUrls.push(coverImageUrl);
-      }
-      allImageUrls.push(...galleryImageUrls);
-
-      const uniqueImageUrls = [...new Set(allImageUrls)];
-
       const newGallery: Gallery = {
         id: `gallery_${Date.now()}`,
-        title,
-        description,
-        images: uniqueImageUrls.map(url => ({ url, alt: title })),
+        title: formData.get('title') as string,
+        description: formData.get('description') as string,
+        image: formData.get('image') as string,
+        album: (formData.get('images') as string).split(',').map(url => url.trim()),
         models: ['Alina'], // FIX: Add a default model to satisfy schema
         tags: [],
         keywords: [],
         date: new Date().toISOString(),
         status: 'Published',
-        category: formData.get('category') as string,
       };
       addGallery(newGallery);
       await loadGalleries();
