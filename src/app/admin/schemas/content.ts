@@ -39,3 +39,21 @@ export const galleryFormSchema = z.object({
   ...baseContentSchema,
   album: z.array(z.object({ value: z.string().url({ message: "Please enter a valid URL for each album image." }) })).optional(),
 });
+
+/**
+ * Defines the validation schema specifically for Model profiles.
+ */
+export const modelFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters.").max(100, "Name cannot exceed 100 characters."),
+  description: z.string().optional(),
+  image: z.string().url("Please enter a valid image URL."),
+  status: z.enum(['Published', 'Draft']),
+  isFeatured: z.boolean().optional(),
+  instagram: z.string().optional(),
+  twitter: z.string().optional(),
+  height: z.string().optional(),
+  bust: z.string().optional(),
+  waist: z.string().optional(),
+  hips: z.string().optional(),
+  famousFor: z.string().optional(),
+});
