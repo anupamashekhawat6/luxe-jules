@@ -10,13 +10,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeft } from 'lucide-react';
 import { ModelProfileForm } from '@/components/admin/ModelProfileForm';
-import { getModelProfile, updateModelProfile } from '@/lib/model-profile-storage';
+import { getModelProfileById, updateModelProfile } from '@/lib/model-profile-storage';
 import { useToast } from "@/lib/use-toast";
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ModelProfileWithImages } from '@/lib/hero-sample-data';
 
 const modelProfileSchema = z.object({
   name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
+  category: z.string().optional(),
   backgroundImage: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   mainImage: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   carouselImages: z.array(z.object({
@@ -38,8 +40,6 @@ export default function EditModelProfilePage() {
     resolver: zodResolver(modelProfileSchema),
     defaultValues: {
       name: "",
-      category: "",
-      description: "",
       backgroundImage: "",
       mainImage: "",
       carouselImages: []
@@ -48,7 +48,7 @@ export default function EditModelProfilePage() {
 
   useEffect(() => {
     const profileId = params.id as string;
-    const existingProfile = getModelProfile(profileId);
+    const existingProfile = getModelProfileById(profileId);
     
     if (!existingProfile) {
       toast({

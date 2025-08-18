@@ -19,7 +19,7 @@ import Image from 'next/image'
 import { AIAvatarGenerator } from '@/components/admin/AIAvatarGenerator'
 import { Skeleton } from '@/components/ui/skeleton'
 
-export const modelSchema = z.object({
+const modelSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
     image: z.string().min(1, { message: "Image URL is required." }).url("Please provide a valid image URL."),
     description: z.string().optional(),

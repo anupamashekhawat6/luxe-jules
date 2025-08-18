@@ -39,12 +39,21 @@ export default function NewGalleryPage() {
             ...tagsArray
         ]));
 
+        const newImages = [];
+        if (values.image) {
+            newImages.push({ url: values.image, alt: values.title });
+        }
+        if (values.album) {
+            newImages.push(...values.album.map(item => ({ url: item.value, alt: values.title })));
+        }
+
         const newGallery: Gallery = {
           id: `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           ...values,
+          description: values.description || '',
           tags: tagsArray,
           keywords: keywords,
-          album: values.album ? values.album.map(item => item.value) : [],
+          images: newImages,
           date: new Date().toISOString(),
         };
 

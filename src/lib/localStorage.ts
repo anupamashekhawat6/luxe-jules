@@ -41,70 +41,20 @@ export function initializeLocalStorage() {
 }
 
 // Data Access Functions
-export const getModels = (): Model[] => {
-  if (typeof window === 'undefined') return [];
-
-  try {
-    const models = localStorage.getItem('models');
-    const parsed = models ? JSON.parse(models) : [];
-    return Array.isArray(parsed) ? parsed.filter(m => m && m.id) : [];
-  } catch (error) {
-    console.error('Error loading models:', error);
-    return [];
-  }
-};
+export const getModels = (): Model[] => getItem('models', seedData.models);
 export const setModels = (data: Model[]) => setItem('models', data);
 export const getModelById = (id: string) => getModels().find(m => m.id === id);
 
-export const getVideos = (): Video[] => {
-  if (typeof window === 'undefined') return [];
-
-  try {
-    const videos = localStorage.getItem('videos');
-    const parsed = videos ? JSON.parse(videos) : [];
-    return Array.isArray(parsed) ? parsed.filter(v => v && v.id) : [];
-  } catch (error) {
-    console.error('Error loading videos:', error);
-    return [];
-  }
-};
-
-export const getGalleries = (): Gallery[] => {
-  if (typeof window === 'undefined') return [];
-
-  try {
-    const galleries = localStorage.getItem('galleries');
-    const parsed = galleries ? JSON.parse(galleries) : [];
-    return Array.isArray(parsed) ? parsed.filter(g => g && g.id) : [];
-  } catch (error) {
-    console.error('Error loading galleries:', error);
-    return [];
-  }
-};
+export const getVideos = (): Video[] => getItem('videos', seedData.videos);
 export const setVideos = (data: Video[]) => setItem('videos', data);
 export const getVideoById = (id: string) => getVideos().find(v => v.id === id);
 
+export const getGalleries = (): Gallery[] => getItem('galleries', seedData.galleries);
 export const setGalleries = (data: Gallery[]) => setItem('galleries', data);
 export const getGalleryById = (id: string) => getGalleries().find(g => g.id === id);
 
-export const getUsers = (): User[] => {
-  if (typeof window === 'undefined') return [];
-  try {
-    const users = localStorage.getItem('users');
-    return users ? JSON.parse(users) : [];
-  } catch (error) {
-    console.error('Error parsing users from localStorage:', error);
-    return [];
-  }
-};
-export const setUsers = (users: User[]): void => {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem('users', JSON.stringify(users));
-  } catch (error) {
-    console.error('Error saving users to localStorage:', error);
-  }
-};
+export const getUsers = (): User[] => getItem('users', seedData.users);
+export const setUsers = (users: User[]): void => setItem('users', users);
 export const getUserById = (id: string) => getUsers().find(u => u.id === id);
 export const getUserByEmail = (email: string) => getUsers().find(u => u.email === email);
 
@@ -132,117 +82,75 @@ export interface FavoriteItem {
   tags?: string[];
 }
 
-export const getFavorites = (): FavoriteItem[] => {
-  if (typeof window === 'undefined') return [];
-
-  try {
-    const favorites = localStorage.getItem('luxury_favorites');
-    if (!favorites) return [];
-
-    const parsed = JSON.parse(favorites);
-    // Migrate old format
-    if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
-      return [];
-    }
-
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    console.error('Error loading favorites:', error);
-    return [];
-  }
-};
+export const getFavorites = (): FavoriteItem[] => getItem('luxury_favorites', []);
 
 export const addToFavorites = (item: {
-  id: string;
-  type: 'video' | 'gallery' | 'model';
-  title?: string;
-  name?: string;
-  image: string;
-  category?: string;
-  keywords?: string[];
+    id: string;
+    type: 'video' | 'gallery' | 'model';
+    title?: string;
+    name?: string;
+    image: string;
+    category?: string;
+    keywords?: string[];
 }): boolean => {
-  if (typeof window === 'undefined') return false;
-
-  try {
+    if (!isBrowser) return false;
     const favorites = getFavorites();
     const existingIndex = favorites.findIndex(fav => fav.id === item.id && fav.type === item.type);
 
     if (existingIndex === -1) {
-      const favoriteItem: FavoriteItem = {
-        id: item.id,
-        type: item.type,
-        title: item.title || item.name || 'Untitled',
-        image: item.image,
-        addedAt: new Date().toISOString(),
-        category: item.category,
-        tags: item.keywords || []
-      };
+        const favoriteItem: FavoriteItem = {
+            id: item.id,
+            type: item.type,
+            title: item.title || item.name || 'Untitled',
+            image: item.image,
+            addedAt: new Date().toISOString(),
+            category: item.category,
+            tags: item.keywords || []
+        };
 
-      const updatedFavorites = [favoriteItem, ...favorites].slice(0, 1000); // Limit to 1000 items
-      localStorage.setItem('luxury_favorites', JSON.stringify(updatedFavorites));
+        const updatedFavorites = [favoriteItem, ...favorites].slice(0, 1000); // Limit to 1000 items
+        setItem('luxury_favorites', updatedFavorites);
 
-      // Save favorites summary for quick access
-      const summary = updatedFavorites.map(f => ({ id: f.id, type: f.type }));
-      localStorage.setItem('luxury_favorites_summary', JSON.stringify(summary));
+        // Save favorites summary for quick access
+        const summary = updatedFavorites.map(f => ({ id: f.id, type: f.type }));
+        setItem('luxury_favorites_summary', summary);
 
-      return true;
+        return true;
     }
 
     return false;
-  } catch (error) {
-    console.error('Error adding to favorites:', error);
-    return false;
-  }
 };
 
 export const removeFromFavorites = (contentId: string, type?: 'video' | 'gallery' | 'model'): boolean => {
-  if (typeof window === 'undefined') return false;
-
-  try {
+    if (!isBrowser) return false;
     const favorites = getFavorites();
-    const updatedFavorites = favorites.filter(fav => 
-      !(fav.id === contentId && (!type || fav.type === type))
+    const updatedFavorites = favorites.filter(fav =>
+        !(fav.id === contentId && (!type || fav.type === type))
     );
 
     if (updatedFavorites.length !== favorites.length) {
-      localStorage.setItem('luxury_favorites', JSON.stringify(updatedFavorites));
-
-      // Update summary
-      const summary = updatedFavorites.map(f => ({ id: f.id, type: f.type }));
-      localStorage.setItem('luxury_favorites_summary', JSON.stringify(summary));
-
-      return true;
+        setItem('luxury_favorites', updatedFavorites);
+        const summary = updatedFavorites.map(f => ({ id: f.id, type: f.type }));
+        setItem('luxury_favorites_summary', summary);
+        return true;
     }
 
     return false;
-  } catch (error) {
-    console.error('Error removing from favorites:', error);
-    return false;
-  }
 };
 
 export const isFavorite = (contentId: string, type?: 'video' | 'gallery' | 'model'): boolean => {
-  if (typeof window === 'undefined') return false;
-
-  try {
-    // Use summary for quick lookup
-    const summary = localStorage.getItem('luxury_favorites_summary');
+    if (!isBrowser) return false;
+    const summary = getItem<{ id: string; type: string }[]>('luxury_favorites_summary', []);
     if (summary) {
-      const parsed = JSON.parse(summary);
-      return parsed.some((fav: any) => 
-        fav.id === contentId && (!type || fav.type === type)
-      );
+        return summary.some((fav: any) =>
+            fav.id === contentId && (!type || fav.type === type)
+        );
     }
 
-    // Fallback to full favorites
     const favorites = getFavorites();
-    return favorites.some(fav => 
-      fav.id === contentId && (!type || fav.type === type)
+    return favorites.some(fav =>
+        fav.id === contentId && (!type || fav.type === type)
     );
-  } catch (error) {
-    console.error('Error checking favorites:', error);
-    return false;
-  }
 };
 
 export const getFavoritesByType = (type: 'video' | 'gallery' | 'model'): FavoriteItem[] => {
@@ -250,26 +158,18 @@ export const getFavoritesByType = (type: 'video' | 'gallery' | 'model'): Favorit
 };
 
 export const getFavoritesCount = (): number => {
-  try {
-    const summary = localStorage.getItem('luxury_favorites_summary');
+    if (!isBrowser) return 0;
+    const summary = getItem<{ id: string; type: string }[]>('luxury_favorites_summary', null);
     if (summary) {
-      return JSON.parse(summary).length;
+        return summary.length;
     }
     return getFavorites().length;
-  } catch {
-    return 0;
-  }
 };
 
 export const clearFavorites = (): void => {
-  if (typeof window === 'undefined') return;
-
-  try {
-    localStorage.removeItem('luxury_favorites');
-    localStorage.removeItem('luxury_favorites_summary');
-  } catch (error) {
-    console.error('Error clearing favorites:', error);
-  }
+    if (!isBrowser) return;
+    setItem('luxury_favorites', []);
+    setItem('luxury_favorites_summary', []);
 };
 
 // CRUD Functions for Galleries
