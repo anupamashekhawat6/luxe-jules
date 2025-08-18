@@ -30,9 +30,9 @@ export function ModelPortfolio({ videos, galleries }: ModelPortfolioProps) {
 
       const photoContent = safeGalleries.flatMap(gallery => {
         const images = Array.isArray(gallery.images) ? gallery.images : [];
-        return images.filter(img => img && img.id && img.url).map(image => ({
-          id: `${gallery.id}-${image.id}`,
-          title: image.title || gallery.title || 'Untitled',
+        return images.filter(img => img && img.url).map((image, index) => ({
+          id: `${gallery.id}-photo-${index}`,
+          title: image.alt || gallery.title || 'Untitled',
           thumbnail: image.url,
           type: 'photo' as const,
           date: new Date(gallery.date),

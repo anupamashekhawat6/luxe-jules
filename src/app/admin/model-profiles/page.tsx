@@ -81,7 +81,6 @@ export default function ModelProfilesPage() {
             <TableRow className="hover:bg-muted/50">
               <TableHead className="w-[80px]">Preview</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
               <TableHead>Images</TableHead>
               <TableHead>Updated</TableHead>
               <TableHead className="w-[100px] text-right">Actions</TableHead>
@@ -117,7 +116,6 @@ export default function ModelProfilesPage() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">{profile.name}</TableCell>
-                    <TableCell>{profile.category}</TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">
                         {imageCount} image{imageCount !== 1 ? 's' : ''}

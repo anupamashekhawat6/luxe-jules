@@ -21,34 +21,6 @@ function VideosPageSkeleton() {
     );
 }
 
-function VideosContent() {
-    const searchParams = useSearchParams();
-    const currentPage = Number(searchParams.get('page')) || 1;
-
-    const [videos, setVideos] = useState<Video[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(true);
-        const allPublishedVideos = getVideos().filter(v => v.status === 'Published');
-        const total = allPublishedVideos.length;
-        const pages = Math.ceil(total / VIDEOS_PER_PAGE);
-        const startIndex = (currentPage - 1) * VIDEOS_PER_PAGE;
-        const endIndex = startIndex + VIDEOS_PER_PAGE;
-
-        setVideos(allPublishedVideos.slice(startIndex, endIndex));
-        setTotalPages(pages);
-        setLoading(false);
-    }, [currentPage]);
-
-    if (loading) {
-        return <VideosPageSkeleton />;
-    }
-
-    return <VideosList videos={videos} totalPages={totalPages} currentPage={currentPage} />
-}
-
 export default function VideosPage() {
   return (
     <div className="w-full-safe max-w-screen-safe">
@@ -63,8 +35,9 @@ export default function VideosPage() {
             Immerse yourself in our curated selection of premium video content
           </p>
         </div>
-
-        <VideosList />
+        <Suspense fallback={<VideosPageSkeleton />}>
+          <VideosList />
+        </Suspense>
       </div>
     </div>
   );

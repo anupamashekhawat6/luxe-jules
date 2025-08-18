@@ -153,18 +153,18 @@ export const VideoPlayer = ({ video }: { video: Video }) => {
             setError(null);
         };
         const handleError = () => {
-            if(!videoElement) return;
-            switch (videoElement.error?.code) {
-                case videoElement.error.MEDIA_ERR_ABORTED:
+            if(!videoElement || !videoElement.error) return;
+            switch (videoElement.error.code) {
+                case MediaError.MEDIA_ERR_ABORTED:
                     setError('Video playback was aborted.');
                     break;
-                case videoElement.error.MEDIA_ERR_NETWORK:
+                case MediaError.MEDIA_ERR_NETWORK:
                     setError('A network error caused the video download to fail.');
                     break;
-                case videoElement.error.MEDIA_ERR_DECODE:
+                case MediaError.MEDIA_ERR_DECODE:
                     setError('The video playback was aborted due to a corruption problem.');
                     break;
-                case videoElement.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
                     setError('The video could not be loaded, either because the server or network failed or because the format is not supported.');
                     break;
                 default:

@@ -112,17 +112,27 @@ export const ContentCard = ({
         </div>
       <Link href={linkUrl} className="block w-full h-full" aria-label={`View details for ${content.title}`}>
         <div className="relative w-full h-full">
-          <Image
-            src={content.image}
-            alt={content.title}
-            fill
-            className={cn(
-              "object-cover w-full h-full transition-opacity duration-300",
-              isVideo && canPlay && isHovering ? 'opacity-0' : 'opacity-100'
-            )}
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-            priority={priority}
-          />
+          {(() => {
+            const imageUrl = type === 'gallery'
+              ? (content as Gallery).images?.[0]?.url
+              : (content as Video).image;
+
+            if (!imageUrl) return null;
+
+            return (
+              <Image
+                src={imageUrl}
+                alt={content.title}
+                fill
+                className={cn(
+                  "object-cover w-full h-full transition-opacity duration-300",
+                  isVideo && canPlay && isHovering ? 'opacity-0' : 'opacity-100'
+                )}
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                priority={priority}
+              />
+            );
+          })()}
 
           {isVideo && canPlay && (content as Video).videoUrl && (
             <video
@@ -146,7 +156,7 @@ export const ContentCard = ({
 
           <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
             <h3 className="font-bold text-lg truncate shadow-black/50 [text-shadow:0_1px_4px_var(--tw-shadow-color)]">{content.title}</h3>
-            <p className="text-sm text-foreground/90 truncate shadow-black/50 [text-shadow:0_1px_4px_var(--tw-shadow-color)]">{content.models.join(', ')}</p>
+            <p className="text-sm text-foreground/90 truncate shadow-black/50 [text-shadow:0_1px_4px_var(--tw-shadow-color)]">{(content.models || []).join(', ')}</p>
           </div>
         </div>
       </Link>

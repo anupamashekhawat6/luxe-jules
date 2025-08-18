@@ -47,7 +47,7 @@ export const modelFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters.").max(100, "Name cannot exceed 100 characters."),
   description: z.string().optional(),
   image: z.string().url("Please enter a valid image URL."),
-  status: z.enum(['Published', 'Draft']),
+  status: z.enum(['Active', 'Inactive']),
   isFeatured: z.boolean().optional(),
   instagram: z.string().optional(),
   twitter: z.string().optional(),

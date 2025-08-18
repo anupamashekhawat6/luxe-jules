@@ -68,7 +68,7 @@ export default function TagsPage() {
               }
 
               let newTags = [...item.tags];
-              let newKeywords = [...item.keywords];
+              let newKeywords = [...(item.keywords || [])];
 
               if (operation === 'delete') {
                   newTags = newTags.filter(t => t !== oldName);

@@ -56,6 +56,7 @@ export default function NewModelPage() {
         const newModel: Model = {
             id: `model_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             ...values,
+            status: 'Active',
             description: values.description || '', // Ensure description is not undefined
         };
         const models = getModels();

@@ -33,14 +33,17 @@ export default function EditGalleryPage() {
       if (gallery) {
         const tags = gallery.tags || [];
         setOriginalTags(tags);
+        const coverImage = gallery.images?.[0]?.url || "";
+        const albumImages = (gallery.images?.slice(1) || []).map(img => ({ value: img.url }));
+
         form.reset({
           title: gallery.title || "",
           description: gallery.description || "",
-          image: gallery.image || "",
+          image: coverImage,
           models: gallery.models || [],
           tags: tags.join(", "),
           status: gallery.status || 'Draft',
-          album: (gallery.album || []).map(url => ({ value: url })),
+          album: albumImages,
         });
       }
       setLoading(false);
@@ -63,12 +66,25 @@ export default function EditGalleryPage() {
             ...newTagsArray
         ]));
 
+        const { image, album, ...restOfValues } = values;
+        const newImages = [];
+        if (image) {
+          newImages.push({ url: image, alt: values.title });
+        }
+        if (album) {
+          album.forEach(item => {
+            if (item.value) {
+              newImages.push({ url: item.value, alt: values.title });
+            }
+          });
+        }
+
         const updatedGallery: Gallery = {
             ...galleries[galleryIndex],
-            ...values,
+            ...restOfValues,
+            images: newImages,
             tags: newTagsArray,
             keywords: keywords,
-            album: values.album ? values.album.map(item => item.value) : [],
         };
         
         galleries[galleryIndex] = updatedGallery;

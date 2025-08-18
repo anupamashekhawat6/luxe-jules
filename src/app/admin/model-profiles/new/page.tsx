@@ -41,8 +41,6 @@ export default function NewModelProfilePage() {
       const newProfile: ModelProfileWithImages = {
         id: `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         name: values.name,
-        category: "Hero", // Default category
-        description: "", // Default description
         createdAt: new Date(),
         updatedAt: new Date(),
         images: [

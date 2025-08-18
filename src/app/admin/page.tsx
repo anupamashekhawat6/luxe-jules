@@ -105,15 +105,23 @@ export default function AdminDashboard() {
                                 </div>
                             ))
                         ) : recentContent.length > 0 ? (
-                            recentContent.map(item => (
+                            recentContent.map(item => {
+                                let imageUrl: string | undefined;
+                                if (item.type === 'gallery') {
+                                    imageUrl = (item as Gallery).images?.[0]?.url;
+                                } else {
+                                    imageUrl = (item as VideoType).image;
+                                }
+
+                                return (
                                 <div key={item.id} className="flex items-center gap-3 sm:gap-4 w-full max-w-full">
-                                    <Image 
-                                        src={item.image} 
+                                    {imageUrl && <Image
+                                        src={imageUrl}
                                         alt={item.title} 
                                         width={64} 
                                         height={64} 
                                         className="rounded-md object-cover w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0"
-                                    />
+                                    />}
                                     <div className="flex-1 min-w-0 overflow-hidden">
                                         <h3 className="font-medium text-sm sm:text-base text-truncate-1">{item.title}</h3>
                                         <p className="text-xs sm:text-sm text-muted-foreground capitalize text-truncate-1">{item.type}</p>
@@ -127,7 +135,7 @@ export default function AdminDashboard() {
                                         Edit
                                     </Button>
                                 </div>
-                            ))
+                            )})
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
                                 <p className="text-sm sm:text-base">No recent content found</p>

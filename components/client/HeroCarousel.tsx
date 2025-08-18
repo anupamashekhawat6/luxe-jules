@@ -71,7 +71,8 @@ function HeroCarousel() {
             onError={(e) => {
               console.error(`Failed to load image: ${item.src}`, e);
               // Optionally replace with a placeholder or hide the image
-              e.target.style.display = 'none';
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
             }}
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">

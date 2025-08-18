@@ -51,7 +51,7 @@ export default function GalleryPage() {
         }
 
         const allModels = getModels();
-        const modelData = galleryData.models
+        const modelData = (galleryData.models || [])
             .map(name => allModels.find((m: Model) => m.name === name))
             .filter((m): m is Model => !!m);
         
@@ -75,24 +75,26 @@ export default function GalleryPage() {
       timeZone: 'UTC',
   });
 
-  const albumPhotos: Photo[] = (gallery.album || []).map((url, i) => ({
-      id: `${gallery.id}-photo-${i}`, 
-      image: url, 
-      title: `${gallery.title} - Photo ${i+1}`,
-      galleryId: gallery.id,
-      galleryTitle: gallery.title,
-    }));
+  const albumPhotos: Photo[] = (gallery.images || []).map((img, i) => ({
+    id: `${gallery.id}-photo-${i}`,
+    image: img.url,
+    title: img.alt || `${gallery.title} - Photo ${i + 1}`,
+    galleryId: gallery.id,
+    galleryTitle: gallery.title,
+  }));
   
   return (
     <main>
       <div className="relative h-[60vh] w-full flex flex-col justify-end">
-          <Image
-              src={gallery.image}
-              alt={`Cover image for ${gallery.title}`}
-              fill
-              className="w-full h-full object-cover"
-              priority
-          />
+          {gallery.images && gallery.images.length > 0 && (
+            <Image
+                src={gallery.images[0].url}
+                alt={gallery.images[0].alt || `Cover image for ${gallery.title}`}
+                fill
+                className="w-full h-full object-cover"
+                priority
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
           <div className="relative z-10 px-4 pb-12">
               <div className="text-center">
