@@ -498,6 +498,7 @@ export default function UsersPage() {
                   <PaginationContent className="flex-wrap gap-2">
                     <PaginationItem>
                       <PaginationPrevious 
+                        href="#"
                         onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                         className={`min-h-[44px] min-w-[44px] touch-manipulation ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
                       />
@@ -522,6 +523,7 @@ export default function UsersPage() {
                         return (
                           <PaginationItem key={pageNumber} className="hidden sm:block">
                             <PaginationLink
+                              href="#"
                               onClick={() => setCurrentPage(pageNumber)}
                               isActive={currentPage === pageNumber}
                               className="min-h-[44px] min-w-[44px] touch-manipulation"
@@ -543,6 +545,7 @@ export default function UsersPage() {
 
                     <PaginationItem>
                       <PaginationNext 
+                        href="#"
                         onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                         className={`min-h-[44px] min-w-[44px] touch-manipulation ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
                       />

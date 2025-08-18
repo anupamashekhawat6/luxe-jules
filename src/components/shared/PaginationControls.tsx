@@ -15,39 +15,45 @@ import {
 interface PaginationControlsProps {
   currentPage: number;
   totalPages: number;
-  basePath: string;
+  onPageChange?: (page: number) => void;
+  basePath?: string; // Optional: for server-side pagination
 }
 
 /**
  * A reusable component to render pagination controls.
- * It centralizes the UI and logic for displaying page numbers, next/previous buttons, and ellipses.
+ * It supports both client-side state changes (via onPageChange) and server-side routing (via basePath).
  * @param currentPage - The currently active page.
  * @param totalPages - The total number of pages.
- * @param basePath - The base path for the page links (e.g., '/videos').
+ * @param onPageChange - Callback function to handle page changes for client-side state.
+ * @param basePath - The base path for page links (e.g., '/videos') for server-side navigation.
  */
-export const PaginationControls: React.FC<PaginationControlsProps> = ({ currentPage, totalPages, basePath }) => {
+export const PaginationControls: React.FC<PaginationControlsProps> = ({ currentPage, totalPages, onPageChange, basePath }) => {
+
+  const handlePageClick = (page: number, e: React.MouseEvent) => {
+    if (onPageChange) {
+      e.preventDefault();
+      onPageChange(page);
+    }
+  };
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
     const maxPagesToShow = 5;
 
-    // Simple case: if total pages are less than or equal to the max to show, render all page numbers.
     if (totalPages <= maxPagesToShow) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(
           <PaginationItem key={i}>
-            <PaginationLink href={`${basePath}?page=${i}`} isActive={i === currentPage}>
+            <PaginationLink href={basePath ? `${basePath}?page=${i}` : '#'} onClick={(e) => handlePageClick(i, e)} isActive={i === currentPage}>
               {i}
             </PaginationLink>
           </PaginationItem>
         );
       }
     } else {
-      // Complex case: render page numbers with ellipses for many pages.
       let startPage = Math.max(1, currentPage - 2);
       let endPage = Math.min(totalPages, currentPage + 2);
 
-      // Adjust window if we are near the start or end.
       if (currentPage <= 3) {
         startPage = 1;
         endPage = 5;
@@ -57,11 +63,10 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({ currentP
         endPage = totalPages;
       }
 
-      // Render the first page and an ellipsis if needed.
       if (startPage > 1) {
         pageNumbers.push(
           <PaginationItem key="1">
-            <PaginationLink href={`${basePath}?page=1`}>1</PaginationLink>
+            <PaginationLink href={basePath ? `${basePath}?page=1` : '#'} onClick={(e) => handlePageClick(1, e)}>1</PaginationLink>
           </PaginationItem>
         );
         if (startPage > 2) {
@@ -69,25 +74,23 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({ currentP
         }
       }
 
-      // Render the main window of page numbers.
       for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(
           <PaginationItem key={i}>
-            <PaginationLink href={`${basePath}?page=${i}`} isActive={i === currentPage}>
+            <PaginationLink href={basePath ? `${basePath}?page=${i}` : '#'} onClick={(e) => handlePageClick(i, e)} isActive={i === currentPage}>
               {i}
             </PaginationLink>
           </PaginationItem>
         );
       }
       
-      // Render the last page and an ellipsis if needed.
       if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
           pageNumbers.push(<PaginationItem key="end-ellipsis"><PaginationEllipsis /></PaginationItem>);
         }
         pageNumbers.push(
           <PaginationItem key={totalPages}>
-            <PaginationLink href={`${basePath}?page=${totalPages}`}>{totalPages}</PaginationLink>
+            <PaginationLink href={basePath ? `${basePath}?page=${totalPages}` : '#'} onClick={(e) => handlePageClick(totalPages, e)}>{totalPages}</PaginationLink>
           </PaginationItem>
         );
       }
@@ -95,7 +98,6 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({ currentP
     return pageNumbers;
   };
 
-  // Do not render pagination if there's only one page or less.
   if (totalPages <= 1) {
     return null;
   }
@@ -104,11 +106,11 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({ currentP
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href={`${basePath}?page=${Math.max(1, currentPage - 1)}`} />
+          <PaginationPrevious href={basePath ? `${basePath}?page=${Math.max(1, currentPage - 1)}` : '#'} onClick={(e) => handlePageClick(Math.max(1, currentPage - 1), e)} />
         </PaginationItem>
         {renderPageNumbers()}
         <PaginationItem>
-          <PaginationNext href={`${basePath}?page=${Math.min(totalPages, currentPage + 1)}`} />
+          <PaginationNext href={basePath ? `${basePath}?page=${Math.min(totalPages, currentPage + 1)}` : '#'} onClick={(e) => handlePageClick(Math.min(totalPages, currentPage + 1), e)} />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

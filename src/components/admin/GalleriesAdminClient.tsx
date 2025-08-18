@@ -68,17 +68,33 @@ export function GalleriesAdminClient() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const handleCreate = async (formData: FormData) => {
     try {
+      const title = formData.get('title') as string;
+      const description = formData.get('description') as string;
+      const coverImageUrl = formData.get('image') as string;
+      const galleryImageUrls = (formData.get('images') as string)
+        .split(',')
+        .map(url => url.trim())
+        .filter(Boolean);
+
+      const allImageUrls = [];
+      if (coverImageUrl) {
+        allImageUrls.push(coverImageUrl);
+      }
+      allImageUrls.push(...galleryImageUrls);
+
+      const uniqueImageUrls = [...new Set(allImageUrls)];
+
       const newGallery: Gallery = {
         id: `gallery_${Date.now()}`,
-        title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        image: formData.get('image') as string,
-        album: (formData.get('images') as string).split(',').map(url => url.trim()),
+        title,
+        description,
+        images: uniqueImageUrls.map(url => ({ url, alt: title })),
         models: ['Alina'], // FIX: Add a default model to satisfy schema
         tags: [],
         keywords: [],
         date: new Date().toISOString(),
         status: 'Published',
+        category: formData.get('category') as string,
       };
       addGallery(newGallery);
       await loadGalleries();

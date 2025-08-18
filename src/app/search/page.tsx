@@ -192,14 +192,16 @@ function SearchResultsContent() {
         sortedResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
       } else if (sortBy === 'newest') {
         sortedResults.sort((a, b) => {
-          const dateA = new Date(a.date || '').getTime();
-          const dateB = new Date(b.date || '').getTime();
+          const dateA = (a as Video | Gallery).date ? new Date((a as Video | Gallery).date).getTime() : 0;
+          const dateB = (b as Video | Gallery).date ? new Date((b as Video | Gallery).date).getTime() : 0;
+          if (a.resultType === 'model') return 1;
+          if (b.resultType === 'model') return -1;
           return dateB - dateA;
         });
       } else if (sortBy === 'alphabetical') {
         sortedResults.sort((a, b) => {
-          const nameA = (a.resultType === 'model' ? a.name : a.title) || '';
-          const nameB = (b.resultType === 'model' ? b.name : b.title) || '';
+          const nameA = (a.resultType === 'model' ? (a as Model).name : (a as Video | Gallery).title) || '';
+          const nameB = (b.resultType === 'model' ? (b as Model).name : (b as Video | Gallery).title) || '';
           return nameA.localeCompare(nameB);
         });
       }

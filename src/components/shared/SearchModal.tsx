@@ -43,7 +43,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
       id: video.id,
       title: video.title,
       type: 'video',
-      image: video.image,
+      image: video.image || '',
       url: `/videos/${video.id}`,
       category: video.category,
       description: video.description,
@@ -53,7 +53,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
       id: gallery.id,
       title: gallery.title,
       type: 'gallery',
-      image: gallery.image,
+      image: gallery.images?.[0]?.url || '',
       url: `/galleries/${gallery.id}`,
       category: gallery.category,
       description: gallery.description,
@@ -65,8 +65,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
       type: 'model',
       image: model.image,
       url: `/models/${model.id}`,
-      category: model.category,
-      description: model.bio,
+      description: model.description,
     }));
 
     return [...videos, ...galleries, ...models];

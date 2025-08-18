@@ -72,7 +72,7 @@ export function ModelsAdminClient() {
             name: formData.get('name') as string,
             description: formData.get('bio') as string,
             image: formData.get('image') as string,
-            status: 'Published',
+            status: 'Active',
             isFeatured: false,
         };
         addModel(newModel);

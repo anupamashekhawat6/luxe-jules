@@ -21,34 +21,6 @@ function GalleriesPageSkeleton() {
     );
 }
 
-function GalleriesContent() {
-    const searchParams = useSearchParams();
-    const currentPage = Number(searchParams.get('page')) || 1;
-
-    const [galleries, setGalleries] = useState<Gallery[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(true);
-        const allPublishedGalleries = getGalleries().filter(g => g.status === 'Published');
-        const total = allPublishedGalleries.length;
-        const pages = Math.ceil(total / GALLERIES_PER_PAGE);
-        const startIndex = (currentPage - 1) * GALLERIES_PER_PAGE;
-        const endIndex = startIndex + GALLERIES_PER_PAGE;
-
-        setGalleries(allPublishedGalleries.slice(startIndex, endIndex));
-        setTotalPages(pages);
-        setLoading(false);
-    }, [currentPage]);
-
-    if (loading) {
-        return <GalleriesPageSkeleton />;
-    }
-
-    return <GalleriesList galleries={galleries} totalPages={totalPages} currentPage={currentPage} />;
-}
-
 export default function GalleriesPage() {
   return (
     <div className="w-full-safe max-w-screen-safe">
@@ -63,8 +35,9 @@ export default function GalleriesPage() {
             Explore our meticulously curated collection of stunning photography
           </p>
         </div>
-
-        <GalleriesList />
+        <Suspense fallback={<GalleriesPageSkeleton />}>
+          <GalleriesList />
+        </Suspense>
       </div>
     </div>
   );

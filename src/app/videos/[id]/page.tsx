@@ -61,9 +61,9 @@ export default function VideoPage() {
     }
     
     const allModels = getModels();
-    const modelData = videoData.models.map(name => {
-        return allModels.find(m => m.name === name);
-    }).filter((m): m is Model => !!m);
+        const modelData = (videoData.models || [])
+            .map(name => allModels.find((m: Model) => m.name === name))
+            .filter((m): m is Model => !!m);
 
     const allVideos = getVideos();
     let related = allVideos

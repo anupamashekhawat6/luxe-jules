@@ -38,7 +38,7 @@ export function GalleriesList() {
   }, [galleries, searchTerm, selectedCategory]);
 
   const categories = useMemo(() => {
-    const uniqueCategories = [...new Set(galleries.map(g => g.category).filter(Boolean))];
+    const uniqueCategories = [...new Set(galleries.map(g => g.category).filter((c): c is string => !!c))];
     return uniqueCategories;
   }, [galleries]);
 

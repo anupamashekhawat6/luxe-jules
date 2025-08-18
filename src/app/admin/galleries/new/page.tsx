@@ -39,12 +39,26 @@ export default function NewGalleryPage() {
             ...tagsArray
         ]));
 
+        const { image, album, ...restOfValues } = values;
+        const newImages = [];
+        if (image) {
+          newImages.push({ url: image, alt: values.title });
+        }
+        if (album) {
+          album.forEach(item => {
+            if (item.value) {
+              newImages.push({ url: item.value, alt: values.title });
+            }
+          });
+        }
+
         const newGallery: Gallery = {
           id: `gallery_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          ...values,
+          ...restOfValues,
+          description: values.description || '',
+          images: newImages,
           tags: tagsArray,
           keywords: keywords,
-          album: values.album ? values.album.map(item => item.value) : [],
           date: new Date().toISOString(),
         };
 

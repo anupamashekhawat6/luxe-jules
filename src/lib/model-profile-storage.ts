@@ -29,61 +29,11 @@ export const getRandomModelProfile = (): ModelProfileWithImages | null => {
   return profiles[randomIndex];
 };
 
-export const saveModelProfile = (profileData: any): ModelProfileWithImages => {
+export const saveModelProfile = (profile: ModelProfileWithImages): ModelProfileWithImages => {
   const profiles = getModelProfiles();
-
-  const newProfile: ModelProfileWithImages = {
-    id: Date.now().toString(),
-    name: profileData.name,
-    description: profileData.description || null,
-    category: profileData.category,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    images: []
-  };
-
-  // Add background image
-  if (profileData.backgroundImage) {
-    newProfile.images.push({
-      id: `bg-${Date.now()}`,
-      modelProfileId: newProfile.id,
-      imageType: 'background',
-      imagePosition: null,
-      imageUrl: profileData.backgroundImage,
-      createdAt: new Date()
-    });
-  }
-
-  // Add main image
-  if (profileData.mainImage) {
-    newProfile.images.push({
-      id: `main-${Date.now()}`,
-      modelProfileId: newProfile.id,
-      imageType: 'main',
-      imagePosition: null,
-      imageUrl: profileData.mainImage,
-      createdAt: new Date()
-    });
-  }
-
-  // Add carousel images
-  profileData.carouselImages?.forEach((carouselImg: any, index: number) => {
-    if (carouselImg.url) {
-      newProfile.images.push({
-        id: `carousel-${Date.now()}-${index}`,
-        modelProfileId: newProfile.id,
-        imageType: 'carousel',
-        imagePosition: carouselImg.position || (index + 1),
-        imageUrl: carouselImg.url,
-        createdAt: new Date()
-      });
-    }
-  });
-
-  profiles.push(newProfile);
+  profiles.push(profile);
   setModelProfiles(profiles);
-
-  return newProfile;
+  return profile;
 };
 
 export const updateModelProfile = (id: string, profileData: any): ModelProfileWithImages | null => {
@@ -97,8 +47,6 @@ export const updateModelProfile = (id: string, profileData: any): ModelProfileWi
   const updatedProfile: ModelProfileWithImages = {
     ...existingProfile,
     name: profileData.name,
-    description: profileData.description || null,
-    category: profileData.category,
     updatedAt: new Date(),
     images: []
   };

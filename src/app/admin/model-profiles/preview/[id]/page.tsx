@@ -77,21 +77,12 @@ export default function PreviewModelProfilePage() {
             <span className="font-medium">Name:</span> {profile.name}
           </div>
           <div>
-            <span className="font-medium">Category:</span> {profile.category}
-          </div>
-          <div>
             <span className="font-medium">Images:</span> {profile.images.length} total
           </div>
           <div>
             <span className="font-medium">Last Updated:</span> {new Date(profile.updatedAt).toLocaleDateString()}
           </div>
         </div>
-        {profile.description && (
-          <div className="mt-4">
-            <span className="font-medium">Description:</span>
-            <p className="mt-1">{profile.description}</p>
-          </div>
-        )}
       </div>
     </div>
   );

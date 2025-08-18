@@ -41,11 +41,11 @@ export function VideosList() {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
         case 'oldest':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
         case 'duration':
-          return parseInt(b.duration) - parseInt(a.duration);
+          return parseInt(b.duration || '0') - parseInt(a.duration || '0');
         default:
           return 0;
       }
@@ -53,7 +53,7 @@ export function VideosList() {
   }, [videos, searchTerm, selectedCategory, sortBy]);
 
   const categories = useMemo(() => {
-    const uniqueCategories = [...new Set(videos.map(v => v.category).filter(Boolean))];
+    const uniqueCategories = [...new Set(videos.map(v => v.category).filter((c): c is string => !!c))];
     return uniqueCategories;
   }, [videos]);
 
